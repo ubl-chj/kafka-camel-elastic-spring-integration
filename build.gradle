@@ -1,0 +1,28 @@
+project('kafka') {
+    description = 'Apache Kafka Sample'
+
+    apply plugin: 'org.springframework.boot'
+
+    dependencies {
+        compile 'org.springframework.boot:spring-boot-starter-integration'
+        compile ("org.springframework.integration:spring-integration-kafka:$springIntegrationKafkaVersion") {
+            exclude group: 'org.slf4j'
+        }
+        annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+        compile "org.springframework.integration:spring-integration-core"
+        compile "org.springframework.kafka:spring-kafka:$springKafkaVersion"
+
+        compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
+
+        testCompile 'org.springframework.boot:spring-boot-starter-test'
+    }
+
+    bootRun {
+        main = 'org.springframework.integration.samples.kafka.Application'
+    }
+
+    task run(type: JavaExec) {
+        main 'org.springframework.integration.samples.kafka.Application'
+        classpath = sourceSets.main.runtimeClasspath
+    }
+}
