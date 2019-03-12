@@ -1,0 +1,4 @@
+rootProject.name = 'kafka-camel-elastic-spring-integration'
+include ':kafka'
+
+project(':kafka').projectDir = "$rootDir/kafka" as File

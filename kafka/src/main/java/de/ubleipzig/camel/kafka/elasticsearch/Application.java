@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.integration.samples.kafka;
+package de.ubleipzig.camel.kafka.elasticsearch;
 
 import java.util.Collections;
 import java.util.Map;
@@ -55,6 +55,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.PollableChannel;
 import org.springframework.messaging.support.GenericMessage;
+import org.springframework.messaging.support.MessageBuilder;
 
 /**
  * @author Gary Russell
@@ -94,9 +95,12 @@ public class Application {
 		}
 		System.out.println("Adding an adapter for a second topic and sending 10 messages...");
 		addAnotherListenerForTopics(this.properties.getNewTopic());
-		headers = Collections.singletonMap(KafkaHeaders.TOPIC, this.properties.getNewTopic());
+		Message<?> message = MessageBuilder
+				.withPayload("{\"message\":\"any message\",\"tenant\":\"client_id\"}")
+				.setHeader(KafkaHeaders.TOPIC, this.properties.getNewTopic())
+				.build();
 		for (int i = 0; i < 10; i++) {
-		    toKafka.send(new GenericMessage<>("bar" + i, headers));
+		    toKafka.send(message);
 		}
 		received = fromKafka.receive(10000);
 		count = 0;

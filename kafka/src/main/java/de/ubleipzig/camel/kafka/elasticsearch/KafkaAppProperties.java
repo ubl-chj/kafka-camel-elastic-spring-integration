@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.integration.samples.kafka;
+package de.ubleipzig.camel.kafka.elasticsearch;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
