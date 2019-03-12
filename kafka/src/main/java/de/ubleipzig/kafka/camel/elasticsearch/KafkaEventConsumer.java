@@ -12,11 +12,11 @@
  * limitations under the License.
  */
 
-package de.ubleipzig.camel.kafka.elasticsearch;
+package de.ubleipzig.kafka.camel.elasticsearch;
 
+import static de.ubleipzig.kafka.camel.elasticsearch.ElasticsearchHighLevelClientImpl.getDocumentId;
 import static org.apache.camel.LoggingLevel.INFO;
 import static org.slf4j.LoggerFactory.getLogger;
-import static de.ubleipzig.camel.kafka.elasticsearch.ElasticsearchHighLevelClientImpl.getDocumentId;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;

@@ -11,7 +11,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.ubleipzig.camel.kafka.elasticsearch;
+
+package de.ubleipzig.kafka.camel.elasticsearch;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -26,46 +27,42 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 
 /**
+ * ElasticsearchHighLevelClientImpl
  * @author christopher-johnson
  */
-class ElasticsearchHighLevelClientImpl {
+final class ElasticsearchHighLevelClientImpl {
 
     private ElasticsearchHighLevelClientImpl() {
     }
 
     static String getDocumentId() {
-        return UUID.randomUUID()
-                   .toString();
+        return UUID.randomUUID().toString();
     }
 
     static Boolean createIndexRequest(final RestHighLevelClient client) {
         final CreateIndexRequest request = new CreateIndexRequest("trellis");
-        final String mapping = "{\"activity-stream\":{\"properties\":{\"@context\":{\"type\":\"text\"}," +
-                "\"id\":{\"type\":\"text\"},\"type\":{\"type\":\"text\"}," +
-                "\"object\":{\"properties\":{\"id\":{\"type\":\"text\"},\"type\":{\"type\":\"text\"}}}," +
-                "\"published\":{\"type\":\"date\",\"format\":\"strict_date_optional_time||epoch_millis\"}}}}";
+        final String mapping = "{\"activity-stream\":{\"properties\":{\"@context\":{\"type\":\"text\"}," + "\"id" +
+                "\":{\"type\":\"text\"},\"type\":{\"type\":\"text\"}," + "\"object\":{\"properties\":{\"id\":{\"type" +
+                "\":\"text\"},\"type\":{\"type\":\"text\"}}}," + "\"published\":{\"type\":\"date\"," +
+                "\"format\":\"strict_date_optional_time||epoch_millis\"}}}}";
         request.mapping("activity-stream", mapping, XContentType.JSON);
         CreateIndexResponse createIndexResponse = null;
         try {
-            createIndexResponse = client.indices()
-                                        .create(request, RequestOptions.DEFAULT);
+            createIndexResponse = client.indices().create(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return Objects.requireNonNull(createIndexResponse)
-                      .isAcknowledged();
+        return Objects.requireNonNull(createIndexResponse).isAcknowledged();
     }
 
     static Boolean deleteIndexRequest(final RestHighLevelClient client) {
         final DeleteIndexRequest request = new DeleteIndexRequest("trellis");
         AcknowledgedResponse deleteIndexResponse = null;
         try {
-            deleteIndexResponse = client.indices()
-                                        .delete(request, RequestOptions.DEFAULT);
+            deleteIndexResponse = client.indices().delete(request, RequestOptions.DEFAULT);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return Objects.requireNonNull(deleteIndexResponse)
-                      .isAcknowledged();
+        return Objects.requireNonNull(deleteIndexResponse).isAcknowledged();
     }
 }

@@ -12,8 +12,10 @@
  * limitations under the License.
  */
 
-package de.ubleipzig.camel.kafka.elasticsearch;
+package de.ubleipzig.kafka.camel.elasticsearch;
 
+import static de.ubleipzig.kafka.camel.elasticsearch.ElasticsearchHighLevelClientImpl.getDocumentId;
+import static de.ubleipzig.kafka.camel.elasticsearch.ProcessorUtils.tokenizePropertyPlaceholder;
 import static java.util.stream.Collectors.toList;
 import static org.apache.camel.Exchange.HTTP_METHOD;
 import static org.apache.camel.Exchange.HTTP_URI;
@@ -23,8 +25,6 @@ import static org.apache.camel.builder.PredicateBuilder.in;
 import static org.trellisldp.camel.ActivityStreamProcessor.ACTIVITY_STREAM_OBJECT_ID;
 import static org.trellisldp.camel.ActivityStreamProcessor.ACTIVITY_STREAM_OBJECT_TYPE;
 import static org.trellisldp.camel.ActivityStreamProcessor.ACTIVITY_STREAM_TYPE;
-import static de.ubleipzig.camel.kafka.elasticsearch.ElasticsearchHighLevelClientImpl.getDocumentId;
-import static de.ubleipzig.camel.kafka.elasticsearch.ProcessorUtils.tokenizePropertyPlaceholder;
 
 import java.util.Map;
 
@@ -47,10 +47,11 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.trellisldp.camel.ActivityStreamProcessor;
 
 /**
- * org.trellisldp.camel.kafka.elasticsearch.KafkaEventConsumerTest.
+ * de.ubleipzig.kafka.camel.elasticsearch.KafkaEventConsumerTest.
  *
  * @author christopher-johnson
  */
@@ -65,8 +66,19 @@ public final class KafkaEventConsumerTest {
     private KafkaEventConsumerTest() {
     }
 
+    @Value("${elasticsearch.host}")
+    private static String elasticsearchHost = "localhost";
+
+    @Value("${elasticsearch.port}")
+    private static Integer elasticsearchPort = 9200;
+
+    @Value("${elasticsearch.scheme}")
+    private static String elasticsearchScheme = "http";
+
+    private static HttpHost elasticSearchHost = new HttpHost(elasticsearchHost, elasticsearchPort, elasticsearchScheme);
+
     private static void initAll() {
-        client = new RestHighLevelClient(RestClient.builder(new HttpHost("localhost", 9200, "http")));
+        client = new RestHighLevelClient(RestClient.builder(elasticSearchHost));
     }
 
     public static void main(final String[] args) throws Exception {
@@ -90,7 +102,7 @@ public final class KafkaEventConsumerTest {
                         .process(new ActivityStreamProcessor())
                         .marshal()
                         .json(JsonLibrary.Jackson, true)
-                        .log(INFO, LOGGER, "Serializing ActivityStreamMessage to JSONLD")
+                        .log(INFO, LOGGER, "Serializing KafkaProducerMessage to JSON")
                         .setHeader("event.index.name", constant("{{event.index.name}}"))
                         .setHeader("event.index.type", constant("{{event.index.type}}"))
                         .setHeader("document.index.name", constant("{{document.index.name}}"))
@@ -127,7 +139,6 @@ public final class KafkaEventConsumerTest {
                                     .toString(), docId);
                             final String jsonString = exchange.getIn()
                                     .getBody(String.class);
-                            System.out.println(jsonString);
                             XContentBuilder builder = XContentFactory.jsonBuilder();
                             XContentParser parser = JsonXContent.jsonXContent.createParser(NamedXContentRegistry
                                     .EMPTY, null, jsonString);
