@@ -6,6 +6,7 @@ This contains a Spring Boot Kafka Producer and a Camel Kafka Consumer.
 The Consumer uses the `org.elasticsearch.client.RestHighLevelClient` to put JSON message bodies into ElasticSearch.
 
 ### Start Kafka, Zookeeper, and ElasticSearch
+Create directory `/mnt/kafka-data` if it does not exist
 `docker-compose up`
 
 ### Produce Test

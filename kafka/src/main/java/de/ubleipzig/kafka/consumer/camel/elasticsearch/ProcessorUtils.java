@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.ubleipzig.kafka.camel.elasticsearch;
+package de.ubleipzig.kafka.consumer.camel.elasticsearch;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;

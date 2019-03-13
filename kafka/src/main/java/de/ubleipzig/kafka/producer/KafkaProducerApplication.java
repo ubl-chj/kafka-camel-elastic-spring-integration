@@ -11,7 +11,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.ubleipzig.kafka.camel.elasticsearch;
+
+package de.ubleipzig.kafka.producer;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,7 +24,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -59,18 +59,20 @@ import org.springframework.messaging.support.MessageBuilder;
  * @author Christopher Johnson
  */
 @SpringBootApplication
-@EnableConfigurationProperties(KafkaAppProperties.class)
+@EnableConfigurationProperties(KafkaProducerAppProperties.class)
 public class KafkaProducerApplication {
 
-    @Autowired
-    private KafkaAppProperties properties;
-    @Autowired
+    private KafkaProducerAppProperties producerProperties;
     private IntegrationFlowContext flowContext;
-    @Autowired
     private KafkaProperties kafkaProperties;
 
-    @Value("${kafka.bootstrap.servers}")
-    private String kafkaBootstrapServers;
+    @Autowired
+    public KafkaProducerApplication(KafkaProducerAppProperties producerProperties, KafkaProperties kafkaProperties,
+                                    IntegrationFlowContext flowContext) {
+        this.producerProperties = producerProperties;
+        this.flowContext = flowContext;
+        this.kafkaProperties = kafkaProperties;
+    }
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = new SpringApplicationBuilder(KafkaProducerApplication.class).web(
@@ -81,14 +83,13 @@ public class KafkaProducerApplication {
 
     private void run(ConfigurableApplicationContext context) {
         try {
-            String json = IOUtils.toString(this.getClass().getResourceAsStream("/data/test1.json"),
-                    "UTF-8");
+            String json = IOUtils.toString(this.getClass().getResourceAsStream("/data/test1.json"), "UTF-8");
             MessageChannel toKafka = context.getBean("toKafka", MessageChannel.class);
             PollableChannel fromKafka = context.getBean("fromKafka", PollableChannel.class);
             System.out.println("Adding an adapter for a second topic and sending 10 messages...");
-            addListenerForTopics(this.properties.getNewTopic());
+            addListenerForTopics(this.producerProperties.getNewTopic());
             Message<?> message = MessageBuilder.withPayload(json).setHeader(
-                    KafkaHeaders.TOPIC, this.properties.getNewTopic()).build();
+                    KafkaHeaders.TOPIC, this.producerProperties.getNewTopic()).build();
             for (int i = 0; i < 10; i++) {
                 toKafka.send(message);
             }
@@ -111,7 +112,7 @@ public class KafkaProducerApplication {
     @Bean
     public Map<String, Object> producerConfigs() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServers);
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, this.producerProperties.getBootstrapServers());
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         return props;
@@ -133,7 +134,7 @@ public class KafkaProducerApplication {
     @Bean
     public MessageHandler handler(KafkaTemplate<Integer, String> kafkaTemplate) {
         KafkaProducerMessageHandler<Integer, String> handler = new KafkaProducerMessageHandler<>(kafkaTemplate);
-        handler.setMessageKeyExpression(new LiteralExpression(this.properties.getMessageKey()));
+        handler.setMessageKeyExpression(new LiteralExpression(this.producerProperties.getMessageKey()));
         return handler;
     }
 
@@ -148,7 +149,7 @@ public class KafkaProducerApplication {
     public KafkaMessageListenerContainer<String, String> container(
             ConsumerFactory<String, String> kafkaConsumerFactory) {
         return new KafkaMessageListenerContainer<>(kafkaConsumerFactory,
-                new ContainerProperties(new TopicPartitionInitialOffset(this.properties.getTopic(), 0)));
+                new ContainerProperties(new TopicPartitionInitialOffset(this.producerProperties.getTopic(), 0)));
     }
 
     /*
@@ -156,8 +157,8 @@ public class KafkaProducerApplication {
      */
 
     @Bean
-    public KafkaMessageDrivenChannelAdapter<String, String> adapter(KafkaMessageListenerContainer<String, String>
-                                                                                container) {
+    public KafkaMessageDrivenChannelAdapter<String, String> adapter(
+            KafkaMessageListenerContainer<String, String> container) {
         KafkaMessageDrivenChannelAdapter<String, String> kafkaMessageDrivenChannelAdapter =
                 new KafkaMessageDrivenChannelAdapter<>(
                 container);
@@ -171,12 +172,12 @@ public class KafkaProducerApplication {
     }
 
     @Bean
-    public NewTopic topic(KafkaAppProperties properties) {
+    public NewTopic topic(KafkaProducerAppProperties properties) {
         return new NewTopic(properties.getTopic(), 1, (short) 1);
     }
 
     @Bean
-    public NewTopic newTopic(KafkaAppProperties properties) {
+    public NewTopic newTopic(KafkaProducerAppProperties properties) {
         return new NewTopic(properties.getNewTopic(), 1, (short) 1);
     }
 

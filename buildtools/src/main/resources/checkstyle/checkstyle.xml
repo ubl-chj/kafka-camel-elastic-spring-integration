@@ -125,11 +125,9 @@
       <property name="throwsIndent" value="8"/>
     </module>
     <module name="SuppressWarningsHolder"/>
-    <module name="FinalClass"/>
     <module name="FinalLocalVariable"/>
     <module name="FinalParameters"/>
     <module name="GenericWhitespace"/>
-    <module name="HideUtilityClassConstructor"/>
     <module name="MultipleStringLiterals">
       <property name="allowedDuplicates" value="3"/>
       <property name="ignoreStringsRegexp" value='^(?:("\\"")|(",")|("=")|(""))$'/>

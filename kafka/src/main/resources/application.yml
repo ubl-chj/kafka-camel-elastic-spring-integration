@@ -1,4 +1,13 @@
+elasticsearch:
+  eventIndexName: trellis
+  eventIndexType: activity-stream
+  docIndexName: annotations
+  docIndexType: anno
+  host: localhost
+  port: 9200
+  scheme: http
 kafka:
+  bootstrapServers: localhost:9092
   topic: si.topic
   newTopic: si.new.topic
   messageKey: si.key

@@ -35,7 +35,7 @@ subprojects { subproject ->
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'com.github.hierynomus.license'
     
-    mainClassName = 'de.ubleipzig.kafka.camel.elasticsearch.KafkaProducerApplication'
+    mainClassName = 'de.ubleipzig.kafka.producer.KafkaProducerApplication'
     jacoco {
         toolVersion = "0.7.9"
     }
@@ -43,7 +43,7 @@ subprojects { subproject ->
     ext {
         camelLdpVersion = '0.1.0'
         camelVersion = '2.20.0'
-        camelSpringIntegrationVersion = '3.0.0-M1'
+        camelSpringBootVersion = '2.15.1'
         commonsIoVersion= '2.6'
         elasticsearchVersion = "6.6.1"
         jaxbVersion = '2.3.0'
@@ -83,15 +83,16 @@ project('kafka') {
         }
         compile ("commons-io:commons-io:$commonsIoVersion")
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:$springBootVersion"
+        compile ("org.apache.camel:camel-spring-boot:$camelSpringBootVersion")
         compile "org.springframework.integration:spring-integration-core"
         compile "org.springframework.kafka:spring-kafka:$springKafkaVersion"
         compile 'com.sun.activation:javax.activation:1.2.0'
         implementation("javax.xml.bind:jaxb-api:$jaxbVersion")
-        implementation group: 'org.apache.camel', name: 'camel-kafka', version: camelVersion
-        implementation group: 'org.trellisldp', name: 'camel-ldp', version: camelLdpVersion        
-        implementation group: 'org.apache.camel', name: 'camel-jackson', version: camelVersion
+        implementation("org.apache.camel:camel-kafka:$camelVersion")
+        implementation("org.trellisldp:camel-ldp:$camelLdpVersion")        
+        implementation("org.apache.camel:camel-jackson:$camelVersion")
         compile "org.springframework.boot:spring-boot-starter-test"
-        implementation group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
+        implementation("ch.qos.logback:logback-classic:$logbackVersion")
     }
 
     license {
@@ -106,7 +107,7 @@ project('kafka') {
     }
     
     task(runConsumer, dependsOn: 'classes', type: JavaExec) {
-        main = 'de.ubleipzig.kafka.camel.elasticsearch.KafkaEventConsumerTest'
+        main = 'de.ubleipzig.kafka.consumer.camel.elasticsearch.KafkaCamelConsumerApplication'
         classpath = sourceSets.main.runtimeClasspath
     }
 }
