@@ -1,15 +1,15 @@
 elasticsearch:
-  eventIndexName: trellis
+  eventIndexName: hsp.events
   eventIndexType: activity-stream
-  docIndexName: annotations
-  docIndexType: anno
+  docIndexName: hsp.docs
+  docIndexType: activity-stream
   host: localhost
+  indexableTypes: Article
   port: 9200
   scheme: http
 kafka:
   bootstrapServers: localhost:9092
-  topic: si.topic
-  newTopic: si.new.topic
+  topic: hsp.docs
   messageKey: si.key
 spring:
   kafka:

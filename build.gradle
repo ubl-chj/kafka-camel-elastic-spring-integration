@@ -93,6 +93,8 @@ project('kafka') {
         implementation("org.apache.camel:camel-jackson:$camelVersion")
         compile "org.springframework.boot:spring-boot-starter-test"
         implementation("ch.qos.logback:logback-classic:$logbackVersion")
+        compile('net.andreinc.mockneat:mockneat:0.3.4')
+
     }
 
     license {

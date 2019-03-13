@@ -14,11 +14,9 @@
 
 package de.ubleipzig.kafka.producer;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -56,6 +54,7 @@ import org.springframework.messaging.PollableChannel;
 import org.springframework.messaging.support.MessageBuilder;
 
 /**
+ * KafkaProducerApplication.
  * @author Christopher Johnson
  */
 @SpringBootApplication
@@ -82,25 +81,23 @@ public class KafkaProducerApplication {
     }
 
     private void run(ConfigurableApplicationContext context) {
-        try {
-            String json = IOUtils.toString(this.getClass().getResourceAsStream("/data/test1.json"), "UTF-8");
-            MessageChannel toKafka = context.getBean("toKafka", MessageChannel.class);
-            PollableChannel fromKafka = context.getBean("fromKafka", PollableChannel.class);
-            System.out.println("Adding an adapter for a second topic and sending 10 messages...");
-            addListenerForTopics(this.producerProperties.getNewTopic());
-            Message<?> message = MessageBuilder.withPayload(json).setHeader(
-                    KafkaHeaders.TOPIC, this.producerProperties.getNewTopic()).build();
-            for (int i = 0; i < 10; i++) {
-                toKafka.send(message);
-            }
-            Message<?> received = fromKafka.receive(10000);
-            int count = 0;
-            while (received != null) {
-                System.out.println(received);
-                received = fromKafka.receive(++count < 10 ? 10000 : 1000);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        MessageChannel toKafka = context.getBean("toKafka", MessageChannel.class);
+        PollableChannel fromKafka = context.getBean("fromKafka", PollableChannel.class);
+        System.out.println("Adding an adapter for a topic and sending 10 messages...");
+        addListenerForTopics(this.producerProperties.getTopic());
+
+        for (int i = 0; i < 10; i++) {
+            final String randomJson = new RandomMessage().buildRandomActivityStreamMessage();
+            Message<?> message = MessageBuilder.withPayload(randomJson).setHeader(
+                    KafkaHeaders.TOPIC, this.producerProperties.getTopic()).build();
+            toKafka.send(message);
+        }
+
+        Message<?> received = fromKafka.receive(10000);
+        int count = 0;
+        while (received != null) {
+            System.out.println(received);
+            received = fromKafka.receive(++count < 10 ? 10000 : 1000);
         }
     }
 
@@ -176,11 +173,6 @@ public class KafkaProducerApplication {
         return new NewTopic(properties.getTopic(), 1, (short) 1);
     }
 
-    @Bean
-    public NewTopic newTopic(KafkaProducerAppProperties properties) {
-        return new NewTopic(properties.getNewTopic(), 1, (short) 1);
-    }
-
     private void addListenerForTopics(String... topics) {
         Map<String, Object> consumerProperties = kafkaProperties.buildConsumerProperties();
         // change the group id so we don't revoke the other partitions.
@@ -191,5 +183,4 @@ public class KafkaProducerApplication {
                         topics)).channel("fromKafka").get();
         this.flowContext.registration(flow).register();
     }
-
 }

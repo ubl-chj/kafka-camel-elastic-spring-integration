@@ -16,10 +16,7 @@ package de.ubleipzig.kafka.producer;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Properties for the kafka sample app.
- *
- * @author Gary Russell
- * @since 5.0
+ * KafkaProducerAppProperties.
  */
 @ConfigurationProperties("kafka")
 public class KafkaProducerAppProperties {

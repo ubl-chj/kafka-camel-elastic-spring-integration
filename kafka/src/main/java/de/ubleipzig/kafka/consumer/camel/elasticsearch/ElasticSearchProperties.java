@@ -24,10 +24,21 @@ public class ElasticSearchProperties {
     private String eventIndexType;
     private String docIndexName;
     private String docIndexType;
+    private String indexableTypes;
 
-    public String getEventIndexName() {
-        return eventIndexName;
+    public String getHost() {
+        return host;
     }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public String getEventIndexName() { return eventIndexName; }
 
     public String getEventIndexType() {
         return eventIndexType;
@@ -41,16 +52,8 @@ public class ElasticSearchProperties {
         return docIndexType;
     }
 
-    public String getHost() {
-        return host;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public String getScheme() {
-        return scheme;
+    public String getIndexableTypes() {
+        return indexableTypes;
     }
 
     public void setHost(String host) {
@@ -79,5 +82,9 @@ public class ElasticSearchProperties {
 
     public void setDocIndexType(String docIndexType) {
         this.docIndexType = docIndexType;
+    }
+
+    public void setIndexableTypes(String indexableTypes) {
+        this.indexableTypes = indexableTypes;
     }
 }

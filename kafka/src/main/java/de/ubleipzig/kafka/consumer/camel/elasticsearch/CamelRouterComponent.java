@@ -56,6 +56,7 @@ public class CamelRouterComponent extends RouteBuilder {
     private String eventIndexType;
     private String docIndexName;
     private String docIndexType;
+    private String indexableTypes;
 
     @Autowired
     public CamelRouterComponent(ElasticSearchProperties esProperties) {
@@ -68,6 +69,7 @@ public class CamelRouterComponent extends RouteBuilder {
         this.eventIndexType = esProperties.getEventIndexType();
         this.docIndexName = esProperties.getDocIndexName();
         this.docIndexType = esProperties.getDocIndexType();
+        this.indexableTypes = esProperties.getIndexableTypes();
     }
 
     @Override
@@ -75,10 +77,12 @@ public class CamelRouterComponent extends RouteBuilder {
         LOGGER.info("About to start route: Kafka Server -> Log ");
         CamelContext context = new DefaultCamelContext();
 
-        from("kafka:{{consumer.topic}}?brokers={{kafka.host}}:{{kafka.port}}" + "&maxPollRecords={{consumer"
-                + ".maxPollRecords}}" + "&consumersCount={{consumer.consumersCount}}" + "&seekTo={{consumer"
-                + ".seekTo}}" + "&groupId={{consumer.group}}").routeId("FromKafka")
-                .routeId("KafkaConsume")
+        from("kafka:{{consumer.topic}}?brokers={{kafka.host}}:{{kafka.port}}"
+                + "&maxPollRecords={{consumer.maxPollRecords}}"
+                + "&consumersCount={{consumer.consumersCount}}"
+                + "&seekTo={{consumer.seekTo}}"
+                + "&groupId={{consumer.group}}")
+                .routeId("FromKafka")
                 .unmarshal()
                 .json(JsonLibrary.Jackson)
                 .process(new ActivityStreamProcessor())
@@ -93,7 +97,7 @@ public class CamelRouterComponent extends RouteBuilder {
                 .to("direct:get");
         from("direct:get").routeId("DocumentGet")
                 .choice()
-                .when(and(in(tokenizePropertyPlaceholder(getContext(), "{{indexable.types}}", ",").stream()
+                .when(and(in(tokenizePropertyPlaceholder(getContext(), this.indexableTypes, ",").stream()
                         .map(type -> header(ACTIVITY_STREAM_OBJECT_TYPE).contains(type))
                         .collect(toList()))))
                 .setHeader(HTTP_METHOD)
@@ -129,7 +133,7 @@ public class CamelRouterComponent extends RouteBuilder {
                     builder.copyCurrentStructure(parser);
                     builder.endObject();
                     LOGGER.debug("Indexing Document Body {}", jsonString);
-                    request.source(builder);
+                    request.source(jsonString, XContentType.JSON);
                     final IndexResponse indexResponse = this.client.index(request, RequestOptions.DEFAULT);
                     LOGGER.info("Document ID {} Indexing Status: {}", docId, indexResponse.status());
                 });
