@@ -47,8 +47,6 @@ $ cd kafka/src/test/resources
  -d @connect.source.datagen.json
  ```
 
-### View Topics UI
-http://localhost:8000
+### View Management UI
+http://localhost:9021
 
-### View Connect UI
-http://localhost:8001
