@@ -14,4 +14,4 @@
 /**
  *
  */
-package de.ubleipzig.kafka.consumer.camel.elasticsearch;
+package de.ubleipzig.kafka.consumer;

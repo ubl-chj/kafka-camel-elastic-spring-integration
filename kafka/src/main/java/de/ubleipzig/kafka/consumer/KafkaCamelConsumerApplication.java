@@ -11,7 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- *
- */
-package de.ubleipzig.kafka.processor;
+package de.ubleipzig.kafka.consumer;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+
+@SpringBootApplication
+@EnableConfigurationProperties(ElasticSearchProperties.class)
+public class KafkaCamelConsumerApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(KafkaCamelConsumerApplication.class, args);
+    }
+}

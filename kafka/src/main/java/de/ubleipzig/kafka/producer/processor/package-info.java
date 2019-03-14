@@ -14,4 +14,4 @@
 /**
  *
  */
-package de.ubleipzig.kafka.templates;
+package de.ubleipzig.kafka.producer.processor;

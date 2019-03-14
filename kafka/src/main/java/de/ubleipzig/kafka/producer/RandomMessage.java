@@ -13,10 +13,10 @@
  */
 package de.ubleipzig.kafka.producer;
 
-import static de.ubleipzig.kafka.processor.JsonSerializer.serialize;
+import static de.ubleipzig.kafka.producer.processor.JsonSerializer.serialize;
 import static net.andreinc.mockneat.unit.text.Strings.strings;
 
-import de.ubleipzig.kafka.templates.ActivityStream;
+import de.ubleipzig.kafka.producer.templates.ActivityStream;
 
 import java.time.LocalDate;
 import java.util.Optional;

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package de.ubleipzig.kafka.consumer.camel.elasticsearch;
+package de.ubleipzig.kafka.consumer;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -30,7 +30,7 @@ import org.elasticsearch.common.xcontent.XContentType;
  * ElasticsearchHighLevelClientImpl.
  * @author christopher-johnson
  */
-final class ElasticsearchHighLevelClientImpl {
+public final class ElasticsearchHighLevelClientImpl {
 
     private ElasticsearchHighLevelClientImpl() {
     }

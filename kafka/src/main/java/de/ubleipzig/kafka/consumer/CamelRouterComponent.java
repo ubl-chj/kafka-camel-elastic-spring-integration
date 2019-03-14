@@ -11,10 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.ubleipzig.kafka.consumer.camel.elasticsearch;
+package de.ubleipzig.kafka.consumer;
 
-import static de.ubleipzig.kafka.consumer.camel.elasticsearch.ElasticsearchHighLevelClientImpl.getDocumentId;
-import static de.ubleipzig.kafka.consumer.camel.elasticsearch.ProcessorUtils.tokenizePropertyPlaceholder;
+import static de.ubleipzig.kafka.consumer.ElasticsearchHighLevelClientImpl.getDocumentId;
+import static de.ubleipzig.kafka.consumer.ProcessorUtils.tokenizePropertyPlaceholder;
 import static java.util.stream.Collectors.toList;
 import static org.apache.camel.Exchange.HTTP_METHOD;
 import static org.apache.camel.Exchange.HTTP_URI;
