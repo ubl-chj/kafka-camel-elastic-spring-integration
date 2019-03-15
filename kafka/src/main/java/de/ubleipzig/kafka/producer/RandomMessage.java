@@ -14,7 +14,11 @@
 package de.ubleipzig.kafka.producer;
 
 import static de.ubleipzig.kafka.producer.processor.JsonSerializer.serialize;
+import static net.andreinc.mockneat.unit.address.Countries.countries;
+import static net.andreinc.mockneat.unit.id.UUIDs.uuids;
 import static net.andreinc.mockneat.unit.text.Strings.strings;
+import static net.andreinc.mockneat.unit.types.Doubles.doubles;
+import static net.andreinc.mockneat.unit.user.Names.names;
 
 import de.ubleipzig.kafka.producer.templates.ActivityStream;
 
@@ -22,15 +26,17 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import net.andreinc.mockneat.MockNeat;
+import net.andreinc.mockneat.utils.file.FileManager;
 
 /**
  * RandomUtils.
  */
 public class RandomMessage {
+    private final FileManager fm = FileManager.getInstance();
     private LocalDate localDate;
     private String summary;
     private String actorId;
-    private String actorType;
+    private Double actorType;
     private String actorName;
     private String actorUrl;
     private String objectId;
@@ -44,14 +50,14 @@ public class RandomMessage {
         MockNeat mock = MockNeat.threadLocal();
         this.localDate = mock.localDates().val();
         this.summary = strings().get();
-        this.actorId = strings().get();
-        this.actorType = strings().get();
-        this.actorName = strings().get();
+        this.actorId = uuids().get();
+        this.actorType = doubles().range(2000.0, 10000.0).get();
+        this.actorName = names().last().get() + ", " + names().first().get();
         this.actorUrl = strings().get();
-        this.objectId = strings().get();
-        this.objectName = strings().get();
+        this.objectId = uuids().get();
+        this.objectName = countries().names().get();
         this.objectUrl = strings().get();
-        this.targetId = strings().get();
+        this.targetId = uuids().get();
         this.targetType = strings().get();
         this.targetName = strings().get();
     }

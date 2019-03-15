@@ -109,7 +109,7 @@ project('kafka') {
     }
 
     task(runConsumer, dependsOn: 'classes', type: JavaExec) {
-        main = 'de.ubleipzig.kafka.consumer.camel.elasticsearch.KafkaCamelConsumerApplication'
+        main = 'de.ubleipzig.kafka.consumer.KafkaCamelConsumerApplication'
         classpath = sourceSets.main.runtimeClasspath
     }
 }

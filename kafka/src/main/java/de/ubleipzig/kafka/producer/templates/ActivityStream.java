@@ -75,13 +75,13 @@ public class ActivityStream {
 
     public static class Actor {
         @JsonProperty
-        private String type;
+        private Double type;
 
-        public String getType() {
+        public Double getType() {
             return type;
         }
 
-        public void setType(String type) {
+        public void setType(Double type) {
             this.type = type;
         }
 

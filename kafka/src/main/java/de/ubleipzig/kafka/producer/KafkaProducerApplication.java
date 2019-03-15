@@ -86,7 +86,7 @@ public class KafkaProducerApplication {
         System.out.println("Adding an adapter for a topic and sending 10 messages...");
         addListenerForTopics(this.producerProperties.getTopic());
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             final String randomJson = new RandomMessage().buildRandomActivityStreamMessage();
             Message<?> message = MessageBuilder.withPayload(randomJson).setHeader(
                     KafkaHeaders.TOPIC, this.producerProperties.getTopic()).build();
